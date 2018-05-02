@@ -1,0 +1,53 @@
+#---Zusammengestellt aus verschiedenen Quellen im Internet---
+
+#
+# Project specific excludes
+#
+Bibliothek/
+
+#
+# Default excludes
+#
+
+# (Generated) Binaries
+bin/
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+*.war
+*.ear
+*.sar
+*.class
+
+# Log file
+*.log
+
+# Maven 
+target/
+
+# eclipse project file
+.settings/
+.classpath
+.project
+*.launch
+
+# Misc
+*.swp
+release.properties
+pom.xml.releaseBackup
+pom.xml.tag
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+#---Ende Zusammengestellt aus verschiedenen Quellen im Internet---
+
+
+
+
+
