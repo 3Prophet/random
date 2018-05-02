@@ -58,8 +58,8 @@ class ApplicationRuleTest extends ApplicationTest {
 
 	@AfterEach
 	public void cleanAfterTest() throws TimeoutException {
-		FxToolkit.hideStage();
-		FxToolkit.cleanupApplication(application);
+		// FxToolkit.hideStage();
+		// FxToolkit.cleanupApplication(application);
 	}
 
 	@AfterAll
