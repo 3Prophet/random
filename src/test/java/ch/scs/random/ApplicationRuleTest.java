@@ -15,6 +15,7 @@ import org.testfx.framework.junit5.ApplicationTest;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.scene.Node;
 
 class ApplicationRuleTest extends ApplicationTest {
 
@@ -65,6 +66,16 @@ class ApplicationRuleTest extends ApplicationTest {
 	@AfterAll
 	public static void cleanAfterAllTests() {
 		Platform.exit();
+	}
+
+	/**
+	 * Retrieves element from the labeled GUI
+	 * 
+	 * @param query Name of the element to retrieve.
+	 * @return
+	 */
+	public <T extends Node> T find(final String query) {
+		return lookup(query).query();
 	}
 
 }
