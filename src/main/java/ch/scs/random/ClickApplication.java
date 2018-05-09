@@ -10,31 +10,32 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 public class ClickApplication extends Application {
-	// application for acceptance tests.
-	@Override
-	public void start(Stage stage) {
-		Parent sceneRoot = new ClickPane();
-		Scene scene = new Scene(sceneRoot, 100, 100);
-		stage.setScene(scene);
-		stage.show();
-	}
+    // application for acceptance tests.
+    @Override
+    public void start(Stage stage) {
+        Parent sceneRoot = new ClickPane();
+        Scene scene = new Scene(sceneRoot, 100, 100);
+        stage.setScene(scene);
+        stage.show();
+    }
 
-	// scene object for unit tests
-	public static class ClickPane extends BorderPane {
-		public ClickPane() {
-			super();
-			Button button = new Button("click me!");
-			button.setId("button");
-			button.setOnAction(actionEvent -> button.setText("clicked!"));
+    // scene object for unit tests
+    public static class ClickPane extends BorderPane {
+        public ClickPane() {
+            super();
+            Button button = new Button("click me!");
+            button.setId("button");
+            button.setOnAction(actionEvent -> button.setText("clicked!"));
 
-			setBottom(button);
+            setBottom(button);
 
-			ImageView imageView = new ImageView();
-			imageView.setId("imageView");
-			Image image = new Image(
-					getClass().getClassLoader().getResourceAsStream("Ausgabeschalter_angezogen_rechts.bmp"));
-			imageView.setImage(image);
-			setCenter(imageView);
-		}
-	}
+            ImageView imageView = new ImageView();
+            imageView.setId("imageView");
+            Image image = new Image(getClass().getClassLoader()
+                    .getResourceAsStream("Ausgabeschalter_angezogen_rechts.bmp"), 0, 0, true, false);
+
+            imageView.setImage(image);
+            setCenter(imageView);
+        }
+    }
 }
