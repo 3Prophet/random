@@ -22,8 +22,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.testfx.api.FxToolkit;
 import org.testfx.framework.junit5.ApplicationTest;
+import org.testfx.util.WaitForAsyncUtils;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -32,10 +34,15 @@ import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
+import javafx.scene.input.KeyCode;
+import javafx.stage.FileChooser;
 
 class ApplicationRuleTest extends ApplicationTest {
 
     private Application application = null;
+
+    @Mock
+    private FileChooser chooser;
 
     @BeforeAll
     public static void setupSpec() throws TimeoutException, InterruptedException {
@@ -49,22 +56,24 @@ class ApplicationRuleTest extends ApplicationTest {
         }
 
         FxToolkit.registerPrimaryStage();
-        FxToolkit.showStage();
+        FxToolkit.hideStage();
     }
 
     @BeforeEach
     public void setUp() throws TimeoutException, InterruptedException {
         application = FxToolkit.setupApplication(ClickApplication.class);
 
+        // when(chooser.showOpenDialog(any(Stage.class))).thenReturn(43); ((ClickApplication) application).setFileChooser(chooser);
+
     }
 
-    @Test
+    // @Test
     void should_contain_button() {
         // expect:
         verifyThat("#button", hasText("click me!"));
     }
 
-    @Test
+    // @Test
     void should_click_on_button() {
         // when:
         clickOn("#button");
@@ -73,25 +82,25 @@ class ApplicationRuleTest extends ApplicationTest {
         verifyThat("#button", hasText("clicked!"));
     }
 
-    @Test
+    // @Test
     void displayed_image_is_equal_to_reference_image_used_for_its_construction() {
         ImageView imageView = (ImageView) find("#imageView");
         Image guiImage = imageView.getImage();
         Image refImage = new Image(getClass().getClassLoader()
                 .getResourceAsStream("Ausgabeschalter_angezogen_rechts.bmp"));
-        assertThat(computeSnapshotSimilarity(guiImage, refImage), is(0L));
+        assertThat(computeDifference(guiImage, refImage), is(0L));
     }
 
-    @Test
+    // @Test
     void displayed_image_is_not_equal_to_reference_image_not_used_for_its_construction() {
         ImageView imageView = (ImageView) find("#imageView");
         Image guiImage = imageView.getImage();
         Image refImage = new Image(getClass().getClassLoader()
                 .getResourceAsStream("Aufloesevorbereiter_abgefallen_Kontakt_leitend_links.bmp"));
-        assertThat(computeSnapshotSimilarity(guiImage, refImage), is(-1L));
+        assertThat(computeDifference(guiImage, refImage), is(-1L));
     }
 
-    @Test
+    // @Test
     void displayed_image_is_not_equal_to_reference_image_when_one_bit_of_latter_flipped() throws IOException {
         ImageView imageView = (ImageView) find("#imageView");
 
@@ -122,7 +131,17 @@ class ApplicationRuleTest extends ApplicationTest {
 
         Image guiImage = imageView.getImage();
         Image refImage = new Image(is);
-        assertThat(computeSnapshotSimilarity(guiImage, refImage), is(1L));
+        assertThat(computeDifference(guiImage, refImage), is(1L));
+    }
+
+    @Test
+    public void open_file_test() {
+        clickOn("#fileMenu").clickOn("#openFile");
+        WaitForAsyncUtils.waitForFxEvents();
+        sleep(5000);
+        write("Ausgabeschalter.bmp").push(KeyCode.ENTER);
+        WaitForAsyncUtils.waitForFxEvents();
+        sleep(5000);
     }
 
     public void byte_array_from_reference_bmp_is_equal_to_that_from_image_from_same_bmp() throws IOException {
@@ -145,7 +164,6 @@ class ApplicationRuleTest extends ApplicationTest {
 
     @AfterEach
     public void cleanAfterTest() throws TimeoutException {
-        FxToolkit.hideStage();
         FxToolkit.cleanupApplication(application);
     }
 
@@ -166,7 +184,7 @@ class ApplicationRuleTest extends ApplicationTest {
     }
 
     /**
-     * Compute the similarity of two JavaFX images.
+     * Compute the difference of two JavaFX images.
      * 
      * @param image1
      *            The first image to test.
@@ -177,25 +195,23 @@ class ApplicationRuleTest extends ApplicationTest {
      * @throws NullPointerException
      *             If image1 or image2 is null.
      */
-    Long computeSnapshotSimilarity(final Image image1, final Image image2) {
-        final int width = (int) image1.getWidth();
-        final int height = (int) image1.getHeight();
-        // System.out.println("Width: " + width);
-        // System.out.println("Height: " + height);
+    public static long computeDifference(final Image image1, final Image image2) {
+        final int width1 = (int) image1.getWidth();
+        final int height1 = (int) image1.getHeight();
 
         final int width2 = (int) image2.getWidth();
         final int height2 = (int) image2.getHeight();
 
-        if (width != width2 || height != height2) {
+        if (width1 != width2 || height1 != height2) {
             return -1L;
         }
 
         final PixelReader reader1 = image1.getPixelReader();
         final PixelReader reader2 = image2.getPixelReader();
 
-        return IntStream.range(0, width)
+        return IntStream.range(0, width1)
                 .parallel()
-                .mapToLong(i -> IntStream.range(0, height)
+                .mapToLong(i -> IntStream.range(0, height1)
                         .parallel()
                         .filter(j -> reader1.getArgb(i, j) != reader2.getArgb(i, j))
                         .count())
