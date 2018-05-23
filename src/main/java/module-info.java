@@ -4,6 +4,7 @@
 
 module ch.scs.random {
     exports ch.scs.random;
+    exports ch.scs.random.utils;
 
     requires javafx.base;
     requires javafx.controls;

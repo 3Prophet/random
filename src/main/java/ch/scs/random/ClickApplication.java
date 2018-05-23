@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
+import ch.scs.random.utils.FileChoice;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -14,7 +15,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 public class ClickApplication extends Application {
@@ -32,13 +32,13 @@ public class ClickApplication extends Application {
         stage.show();
     }
 
-    public void setFileChooser(FileChooser chooser) {
+    public void setFileChooser(FileChoice chooser) {
         ((ClickPane) sceneRoot).setFileChooser(chooser);
     }
 
     // scene object for unit tests
     public static class ClickPane extends BorderPane {
-        private FileChooser fileChooser = new FileChooser();
+        private FileChoice fileChooser = new FileChoice();
 
         private ImageView imageView;
 
@@ -88,7 +88,7 @@ public class ClickApplication extends Application {
             setCenter(imageView);
         }
 
-        public void setFileChooser(FileChooser chooser) {
+        public void setFileChooser(FileChoice chooser) {
             fileChooser = chooser;
         }
 

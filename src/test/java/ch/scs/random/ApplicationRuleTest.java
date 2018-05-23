@@ -2,12 +2,15 @@ package ch.scs.random;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.control.LabeledMatchers.hasText;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -23,10 +26,12 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.testfx.api.FxToolkit;
 import org.testfx.framework.junit5.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 
+import ch.scs.random.utils.FileChoice;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
@@ -34,15 +39,13 @@ import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
-import javafx.scene.input.KeyCode;
-import javafx.stage.FileChooser;
 
 class ApplicationRuleTest extends ApplicationTest {
 
     private Application application = null;
 
     @Mock
-    private FileChooser chooser;
+    private FileChoice chooser;
 
     @BeforeAll
     public static void setupSpec() throws TimeoutException, InterruptedException {
@@ -54,16 +57,18 @@ class ApplicationRuleTest extends ApplicationTest {
             System.setProperty("prism.text", "t2k");
             System.setProperty("java.awt.headless", "true");
         }
-
         FxToolkit.registerPrimaryStage();
-        FxToolkit.hideStage();
     }
 
     @BeforeEach
     public void setUp() throws TimeoutException, InterruptedException {
-        application = FxToolkit.setupApplication(ClickApplication.class);
+        FxToolkit.showStage();
 
-        // when(chooser.showOpenDialog(any(Stage.class))).thenReturn(43); ((ClickApplication) application).setFileChooser(chooser);
+        application = FxToolkit.setupApplication(ClickApplication.class);
+        MockitoAnnotations.initMocks(this);
+        when(chooser.showOpenDialog(any()))
+                .thenReturn(new File("D:\\stw\\workspaces\\new\\random\\src\\main\\resources\\Ausgabeschalter_angezogen_rechts.bmp"));
+        ((ClickApplication) application).setFileChooser(chooser);
 
     }
 
@@ -91,7 +96,7 @@ class ApplicationRuleTest extends ApplicationTest {
         assertThat(computeDifference(guiImage, refImage), is(0L));
     }
 
-    // @Test
+    @Test
     void displayed_image_is_not_equal_to_reference_image_not_used_for_its_construction() {
         ImageView imageView = (ImageView) find("#imageView");
         Image guiImage = imageView.getImage();
@@ -136,12 +141,12 @@ class ApplicationRuleTest extends ApplicationTest {
 
     @Test
     public void open_file_test() {
+        sleep(2000);
         clickOn("#fileMenu").clickOn("#openFile");
+
         WaitForAsyncUtils.waitForFxEvents();
-        sleep(5000);
-        write("Ausgabeschalter.bmp").push(KeyCode.ENTER);
-        WaitForAsyncUtils.waitForFxEvents();
-        sleep(5000);
+
+        sleep(2000);
     }
 
     public void byte_array_from_reference_bmp_is_equal_to_that_from_image_from_same_bmp() throws IOException {
@@ -165,6 +170,8 @@ class ApplicationRuleTest extends ApplicationTest {
     @AfterEach
     public void cleanAfterTest() throws TimeoutException {
         FxToolkit.cleanupApplication(application);
+        FxToolkit.hideStage();
+
     }
 
     @AfterAll
