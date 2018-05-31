@@ -25,6 +25,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.testfx.api.FxToolkit;
@@ -65,7 +67,9 @@ class ApplicationRuleTest extends ApplicationTest {
         FxToolkit.showStage();
 
         application = FxToolkit.setupApplication(ClickApplication.class);
+
         MockitoAnnotations.initMocks(this);
+
         when(chooser.showOpenDialog(any()))
                 .thenReturn(new File("D:\\stw\\workspaces\\new\\random\\src\\main\\resources\\Ausgabeschalter_angezogen_rechts.bmp"));
         ((ClickApplication) application).setFileChooser(chooser);
@@ -87,16 +91,17 @@ class ApplicationRuleTest extends ApplicationTest {
         verifyThat("#button", hasText("clicked!"));
     }
 
-    // @Test
-    void displayed_image_is_equal_to_reference_image_used_for_its_construction() {
+    @ParameterizedTest(name = "[{index}] test with filename: {0}, comparison result: {1}")
+    @MethodSource("imageComparisonSourceData")
+    void displayed_image_is_equal_to_reference_image_used_for_its_construction(String fileName, long result) {
         ImageView imageView = (ImageView) find("#imageView");
         Image guiImage = imageView.getImage();
         Image refImage = new Image(getClass().getClassLoader()
-                .getResourceAsStream("Ausgabeschalter_angezogen_rechts.bmp"));
-        assertThat(computeDifference(guiImage, refImage), is(0L));
+                .getResourceAsStream(fileName));
+        assertThat(computeDifference(guiImage, refImage), is(result));
     }
 
-    @Test
+    // @Test
     void displayed_image_is_not_equal_to_reference_image_not_used_for_its_construction() {
         ImageView imageView = (ImageView) find("#imageView");
         Image guiImage = imageView.getImage();
@@ -137,6 +142,11 @@ class ApplicationRuleTest extends ApplicationTest {
         Image guiImage = imageView.getImage();
         Image refImage = new Image(is);
         assertThat(computeDifference(guiImage, refImage), is(1L));
+    }
+
+    public static Iterable<Object[]> imageComparisonSourceData() {
+        return Arrays.asList(new Object[][] { { "Ausgabeschalter_angezogen_rechts.bmp", -1L },
+                { "Aufloesevorbereiter_abgefallen_Kontakt_leitend_links.bmp", 0L } });
     }
 
     @Test
