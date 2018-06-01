@@ -15,7 +15,7 @@ import javafx.stage.Window;
  * 
  * @code{FileChooser} itself is a final class, so can't be mocked by default by Mockito.
  */
-public class FileChoice {
+public class FileChooserWrapper {
 
     private static final FileChooser chooser = new FileChooser();
 
