@@ -4,16 +4,20 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
-import ch.scs.random.utils.FileChoice;
+import ch.scs.random.utils.FileChooserWrapper;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
@@ -32,15 +36,19 @@ public class ClickApplication extends Application {
         stage.show();
     }
 
-    public void setFileChooser(FileChoice chooser) {
+    public void setFileChooser(FileChooserWrapper chooser) {
         ((ClickPane) sceneRoot).setFileChooser(chooser);
     }
 
     // scene object for unit tests
     public static class ClickPane extends BorderPane {
-        private FileChoice fileChooser = new FileChoice();
+        private FileChooserWrapper fileChooser = new FileChooserWrapper();
 
         private ImageView imageView;
+
+        final private ContextMenu contextMenu = new ContextMenu();
+
+        private Label label = new Label();
 
         public ClickPane(Stage stage) {
             super();
@@ -77,7 +85,10 @@ public class ClickApplication extends Application {
             button.setId("button");
             button.setOnAction(actionEvent -> button.setText("clicked!"));
 
+            label.setId("label");
+
             setBottom(button);
+            setLeft(label);
 
             imageView = new ImageView();
             imageView.setId("imageView");
@@ -86,14 +97,25 @@ public class ClickApplication extends Application {
 
             imageView.setImage(image);
             setCenter(imageView);
+            setupContextMenu();
         }
 
-        public void setFileChooser(FileChoice chooser) {
+        public void setFileChooser(FileChooserWrapper chooser) {
             fileChooser = chooser;
         }
 
-        public void setUpListeners() {
-
+        public void setupContextMenu() {
+            contextMenu.setId("contextMenu");
+            MenuItem cmItem1 = new MenuItem("Copy Image");
+            cmItem1.setId("cmItem1");
+            cmItem1.setOnAction(actionEvent -> label.setText("Image is copied"));
+            contextMenu.getItems()
+                    .add(cmItem1);
+            imageView.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+                if (e.getButton() == MouseButton.SECONDARY) {
+                    contextMenu.show(imageView, e.getScreenX(), e.getScreenY());
+                }
+            });
         }
 
         private void openFile(File file) throws FileNotFoundException {

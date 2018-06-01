@@ -16,13 +16,11 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.TimeoutException;
-import java.util.stream.IntStream;
 
 import javax.imageio.ImageIO;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -30,44 +28,27 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.testfx.api.FxToolkit;
-import org.testfx.framework.junit5.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 
-import ch.scs.random.utils.FileChoice;
-import javafx.application.Application;
+import ch.scs.random.utils.FileChooserWrapper;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.PixelReader;
 
-class ApplicationRuleTest extends ApplicationTest {
+class ApplicationRuleTest extends JavaFxApplicationTest<ClickApplication> {
 
-    private Application application = null;
-
-    @Mock
-    private FileChoice chooser;
-
-    @BeforeAll
-    public static void setupSpec() throws TimeoutException, InterruptedException {
-
-        if (Boolean.getBoolean("headless")) {
-            System.setProperty("testfx.robot", "glass");
-            System.setProperty("testfx.headless", "true");
-            System.setProperty("prism.order", "sw");
-            System.setProperty("prism.text", "t2k");
-            System.setProperty("java.awt.headless", "true");
-        }
-        FxToolkit.registerPrimaryStage();
+    ApplicationRuleTest() {
+        super(ClickApplication.class);
     }
 
+    @Mock
+    private FileChooserWrapper chooser;
+
+    @Override
     @BeforeEach
     public void setUp() throws TimeoutException, InterruptedException {
-        FxToolkit.showStage();
-
-        application = FxToolkit.setupApplication(ClickApplication.class);
-
+        super.setUp();
         MockitoAnnotations.initMocks(this);
 
         when(chooser.showOpenDialog(any()))
@@ -76,17 +57,16 @@ class ApplicationRuleTest extends ApplicationTest {
 
     }
 
-    // @Test
+    @Test
     void should_contain_button() {
         // expect:
         verifyThat("#button", hasText("click me!"));
     }
 
-    // @Test
+    @Test
     void should_click_on_button() {
         // when:
-        clickOn("#button");
-
+        fxRobot.clickOn("#button");
         // then:
         verifyThat("#button", hasText("clicked!"));
     }
@@ -98,7 +78,7 @@ class ApplicationRuleTest extends ApplicationTest {
         Image guiImage = imageView.getImage();
         Image refImage = new Image(getClass().getClassLoader()
                 .getResourceAsStream(fileName));
-        assertThat(computeDifference(guiImage, refImage), is(result));
+        assertThat(UtilsTestFx.computeDifference(guiImage, refImage), is(result));
     }
 
     // @Test
@@ -107,7 +87,7 @@ class ApplicationRuleTest extends ApplicationTest {
         Image guiImage = imageView.getImage();
         Image refImage = new Image(getClass().getClassLoader()
                 .getResourceAsStream("Aufloesevorbereiter_abgefallen_Kontakt_leitend_links.bmp"));
-        assertThat(computeDifference(guiImage, refImage), is(-1L));
+        assertThat(UtilsTestFx.computeDifference(guiImage, refImage), is(-1L));
     }
 
     // @Test
@@ -141,7 +121,7 @@ class ApplicationRuleTest extends ApplicationTest {
 
         Image guiImage = imageView.getImage();
         Image refImage = new Image(is);
-        assertThat(computeDifference(guiImage, refImage), is(1L));
+        assertThat(UtilsTestFx.computeDifference(guiImage, refImage), is(1L));
     }
 
     public static Iterable<Object[]> imageComparisonSourceData() {
@@ -151,12 +131,13 @@ class ApplicationRuleTest extends ApplicationTest {
 
     @Test
     public void open_file_test() {
-        sleep(2000);
-        clickOn("#fileMenu").clickOn("#openFile");
+        fxRobot.sleep(2000);
+        fxRobot.clickOn("#fileMenu")
+                .clickOn("#openFile");
 
         WaitForAsyncUtils.waitForFxEvents();
 
-        sleep(2000);
+        fxRobot.sleep(2000);
     }
 
     public void byte_array_from_reference_bmp_is_equal_to_that_from_image_from_same_bmp() throws IOException {
@@ -177,6 +158,7 @@ class ApplicationRuleTest extends ApplicationTest {
         assertThat(Arrays.equals(guiArray, refArray), is(true));
     }
 
+    @Override
     @AfterEach
     public void cleanAfterTest() throws TimeoutException {
         FxToolkit.cleanupApplication(application);
@@ -188,51 +170,4 @@ class ApplicationRuleTest extends ApplicationTest {
     public static void cleanAfterAllTests() {
         Platform.exit();
     }
-
-    /**
-     * Retrieves element from the labeled GUI
-     * 
-     * @param query
-     *            Name of the element to retrieve.
-     * @return
-     */
-    public <T extends Node> T find(final String query) {
-        return lookup(query).query();
-    }
-
-    /**
-     * Compute the difference of two JavaFX images.
-     * 
-     * @param image1
-     *            The first image to test.
-     * @param image2
-     *            The second image to test.
-     * @return O if images are equal, -1 if their dimensions do not match and positive number reflecting the number of different pixels otherwise.
-     * 
-     * @throws NullPointerException
-     *             If image1 or image2 is null.
-     */
-    public static long computeDifference(final Image image1, final Image image2) {
-        final int width1 = (int) image1.getWidth();
-        final int height1 = (int) image1.getHeight();
-
-        final int width2 = (int) image2.getWidth();
-        final int height2 = (int) image2.getHeight();
-
-        if (width1 != width2 || height1 != height2) {
-            return -1L;
-        }
-
-        final PixelReader reader1 = image1.getPixelReader();
-        final PixelReader reader2 = image2.getPixelReader();
-
-        return IntStream.range(0, width1)
-                .parallel()
-                .mapToLong(i -> IntStream.range(0, height1)
-                        .parallel()
-                        .filter(j -> reader1.getArgb(i, j) != reader2.getArgb(i, j))
-                        .count())
-                .sum();
-    }
-
 }
