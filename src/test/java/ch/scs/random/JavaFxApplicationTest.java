@@ -11,7 +11,6 @@ import org.testfx.api.FxToolkit;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.scene.Node;
 
 /**
  * Class responsible for starting and shutting down the application to be tested.
@@ -27,8 +26,15 @@ public class JavaFxApplicationTest<T extends Application> {
 
     protected final FxRobot fxRobot = new FxRobot();
 
+    protected final SchaltplanEditorRobot robot;
+
+    public interface Precondition {
+        public void establishPrecondition(SchaltplanEditorRobot robot, String rolle);
+    }
+
     JavaFxApplicationTest(Class<T> applicationClass) {
         this.applicationClass = applicationClass;
+        this.robot = new SchaltplanEditorRobot(fxRobot);
     }
 
     @BeforeAll
@@ -58,6 +64,7 @@ public class JavaFxApplicationTest<T extends Application> {
     public void setUp() throws TimeoutException, InterruptedException {
         FxToolkit.showStage();
         application = FxToolkit.setupApplication(applicationClass);
+        robot.setApplication(application);
     }
 
     @AfterEach
@@ -71,15 +78,7 @@ public class JavaFxApplicationTest<T extends Application> {
         Platform.exit();
     }
 
-    /**
-     * Returns widget(node) identified with its fx:id.
-     * 
-     * @param fxId
-     *            Id of the searched parameter.
-     * @return Found node.
-     */
-    protected <T extends Node> T find(final String fxId) {
-        return fxRobot.lookup(fxId)
-                .query();
+    public SchaltplanEditorRobot getRobot() {
+        return robot;
     }
 }
