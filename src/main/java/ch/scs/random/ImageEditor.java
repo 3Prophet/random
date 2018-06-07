@@ -30,7 +30,7 @@ public class ImageEditor extends Application {
     private static FileChooserWrapper fileChooser = new FileChooserWrapper();
 
     public static void setFileChooser(FileChooserWrapper fileChooser) {
-        ImageEditor.setFileChooser(fileChooser);
+        ImageEditor.fileChooser = fileChooser;
     }
 
     @Override
@@ -96,4 +96,7 @@ public class ImageEditor extends Application {
         mainViewController.setImage(image);
     }
 
+    public User getUser() {
+        return user;
+    }
 }
