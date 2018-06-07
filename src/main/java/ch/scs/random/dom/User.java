@@ -6,7 +6,7 @@ public class User {
     private String userRole;
 
     public enum Role {
-        Planer, Prüfer;
+        Planer, Planprüfer, Betrachter;
     }
 
     public User() {
