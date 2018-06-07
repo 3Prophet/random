@@ -189,9 +189,10 @@ public class SchaltplanEditorRobot {
         action.exec(fxRobot);
     }
 
-    public void openUnmodifiedSchaltplanAs(String role) {
-        System.out.println("Hello " + role);
+    public void openUnmodifiedSchaltplanAs(String userRole) {
 
+        userInitiatesOpeningOfExistingSchaltplan(fileOpenViaButtonAction);
+        userProvidesHisNameAndRoleToSchaltplanEditor(userRole);
     }
 
 }
