@@ -57,8 +57,11 @@ public class RolleDialog {
 
     public void setUser(User user) {
         this.user = user;
-        this.nameTextField.setText(user.getUserName());
-        this.roleChoiceBox.setValue(user.getUserRole());
+        this.nameTextField.textProperty()
+                .bind(user.userNameProperty());
+        // this.nameTextField.setText(user.getUserName());
+        this.roleChoiceBox.valueProperty()
+                .bindBidirectional(user.userRoleProperty());
     }
 
 }

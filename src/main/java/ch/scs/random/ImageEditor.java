@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import ch.scs.random.dom.Schaltplan;
 import ch.scs.random.dom.User;
 import ch.scs.random.utils.FileChooserWrapper;
 import ch.scs.random.view.MainView;
@@ -24,6 +25,8 @@ public class ImageEditor extends Application {
     private BorderPane rootLayout;
 
     private User user = new User();
+
+    private Schaltplan schaltplan = new Schaltplan();
 
     private MainView mainViewController;
 
@@ -47,6 +50,7 @@ public class ImageEditor extends Application {
             rootLayout = (BorderPane) loader.load();
             mainViewController = loader.getController();
             mainViewController.setUser(user);
+            mainViewController.setSchaltplan(schaltplan);
             mainViewController.setRoot(this);
             Scene scene = new Scene(rootLayout);
             primaryStage.setScene(scene);
@@ -79,7 +83,6 @@ public class ImageEditor extends Application {
             controller.setDialogStage(dialogStage);
 
             dialogStage.showAndWait();
-            mainViewController.update();
 
             return true;
         } catch (IOException e) {
@@ -93,6 +96,10 @@ public class ImageEditor extends Application {
         System.out.println(file.getAbsolutePath());
 
         Image image = new Image(new FileInputStream(file), 0, 0, true, false);
+        String path = file.getParent();
+        schaltplan.setFileName(file.getAbsolutePath()
+                .substring(path.length() + 1));
+        schaltplan.setFilePath(path);
         mainViewController.setImage(image);
     }
 

@@ -1,6 +1,7 @@
 package ch.scs.random.view;
 
 import ch.scs.random.ImageEditor;
+import ch.scs.random.dom.Schaltplan;
 import ch.scs.random.dom.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -34,16 +35,30 @@ public class MainView {
     private Label rolleLabel;
 
     @FXML
+    private Label nameLabel;
+
+    @FXML
     private ImageView imageView;
 
     @FXML
     private Button openButton;
 
+    @FXML
+    private Button closeButton;
+
     private ContextMenu imageConextMenu;
+
+    @FXML
+    private Label filePath;
+
+    @FXML
+    private Label fileName;
 
     private ImageEditor root;
 
     private User user;
+
+    private Schaltplan schaltplan;
 
     public void setRoot(ImageEditor root) {
         this.root = root;
@@ -68,22 +83,36 @@ public class MainView {
 
     private void initializeContextMenu() {
         imageConextMenu = new ContextMenu();
-        MenuItem saveMenuItem = new MenuItem("Save...");
+        MenuItem saveMenuItem = new MenuItem("Close...");
+        saveMenuItem.setOnAction(e -> {
+            imageView.setImage(null);
+            user.setUserName(null);
+            user.setUserRole(null);
+            rolleLabel.setText(null);
+        });
+
         imageConextMenu.getItems()
                 .add(saveMenuItem);
     }
 
     public void setUser(User user) {
         this.user = user;
-        rolleLabel.setText(user.getUserRole());
-    }
-
-    public void update() {
-        rolleLabel.setText(user.getUserRole());
+        rolleLabel.textProperty()
+                .bind(user.userRoleProperty());
+        nameLabel.textProperty()
+                .bind(user.userNameProperty());
     }
 
     public void setImage(Image image) {
         imageView.setImage(image);
+    }
+
+    public void setSchaltplan(Schaltplan schaltplan) {
+        this.schaltplan = schaltplan;
+        filePath.textProperty()
+                .bind(schaltplan.filePathProperty());
+        fileName.textProperty()
+                .bind(schaltplan.fileNameProperty());
     }
 
 }
