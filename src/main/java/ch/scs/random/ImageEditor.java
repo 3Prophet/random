@@ -112,5 +112,6 @@ public class ImageEditor extends Application {
     public static void setState(EditorState state) {
         ImageEditor.user = state.getUser();
         ImageEditor.schaltplan = state.getSchaltplan();
+
     }
 }

@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.is;
 
 import org.testfx.api.FxRobot;
 
+import ch.scs.random.dom.EditorState;
 import ch.scs.random.dom.User;
 import javafx.application.Application;
 import javafx.scene.Node;
@@ -193,6 +194,11 @@ public class SchaltplanEditorRobot {
 
         userInitiatesOpeningOfExistingSchaltplan(fileOpenViaButtonAction);
         userProvidesHisNameAndRoleToSchaltplanEditor(userRole);
+    }
+
+    public void establishSchaltplanEditorState(EditorState editorState) {
+        ImageEditor.setState(editorState);
+
     }
 
 }

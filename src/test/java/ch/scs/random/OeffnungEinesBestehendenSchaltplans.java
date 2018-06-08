@@ -23,7 +23,8 @@ public class OeffnungEinesBestehendenSchaltplans extends JavaFxApplicationTest<I
     @Override
     @BeforeEach
     public void setUp() throws TimeoutException, InterruptedException {
-
+        // Setting the state to start with
+        ImageEditor.setState(TestResources.getEmptyEditorState());
         super.setUp();
         MockitoAnnotations.initMocks(this);
 

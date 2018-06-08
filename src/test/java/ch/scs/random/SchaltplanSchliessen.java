@@ -1,7 +1,5 @@
 package ch.scs.random;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -9,12 +7,13 @@ import java.util.Arrays;
 import java.util.concurrent.TimeoutException;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import ch.scs.random.dom.EditorState;
+import ch.scs.random.dom.User.Role;
 import ch.scs.random.utils.FileChooserWrapper;
 
 public class SchaltplanSchliessen extends JavaFxApplicationTest<ImageEditor> {
@@ -37,26 +36,17 @@ public class SchaltplanSchliessen extends JavaFxApplicationTest<ImageEditor> {
         super(ImageEditor.class);
     }
 
-    /*
-     * @ParameterizedTest(name = "[{index}] Action: {0}, Role: {1}")
-     * 
-     * @MethodSource("actionRoleData") public void unveraenderterSchaltplanSchliessen(FileCloseAction action, String rolle) { //
-     * SchaltplanEditorRobot.openSchaltplanWithRole.establish(robot, rolle, SchaltplanEditorRobot.fileOpenViaButtonAction);
-     * robot.userInitiatesClosingOfExistingSchaltplan(action);
-     * 
-     * }
-     */
+    // @ExtendWith(UnmodifiedPlanOpenedPrecondition.class)
+    @ParameterizedTest(name = "[{index}] Closing Schaltplan using {0} action")
+    @MethodSource("closeActions")
+    public void closePlan(SchaltplanEditorRobot.FileCloseAction action, EditorState editorState) {
+        robot.establishSchaltplanEditorState(editorState);
+        robot.userInitiatesClosingOfExistingSchaltplan(action);
 
-    @ExtendWith(UnmodifiedPlanOpenedPrecondition.class)
-    @ParameterizedTest
-    @ValueSource(strings = { "one", "two" })
-    public void closePlan(String param) {
-        getRobot().getFxRobot()
-                .sleep(2000);
-        assertThat(param, equalTo(param));
     }
 
-    private static Iterable<Object[]> actionRoleData() {
-        return Arrays.asList(new Object[][] { { SchaltplanEditorRobot.fileCloseViaContextMenuAction, "Planer" } });
+    private static Iterable<Object[]> closeActions() {
+        return Arrays.asList(
+                new Object[][] { { SchaltplanEditorRobot.fileCloseViaContextMenuAction, TestResources.getUnmodifiedSchaltplanState(Role.Planer) } });
     }
 }
