@@ -77,7 +77,11 @@
                   <Insets />
                </VBox.margin>
             </AnchorPane>
-            <ImageView fx:id="imageView" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#handleImageViewRightClick" pickOnBounds="true" preserveRatio="true" />
+            <AnchorPane VBox.vgrow="ALWAYS">
+               <children>
+                  <ImageView fx:id="imageView" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#handleImageViewRightClick" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+               </children>
+            </AnchorPane>
          </children>
       </VBox>
    </center>

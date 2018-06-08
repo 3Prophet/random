@@ -113,6 +113,8 @@ public class MainView {
                 .bind(schaltplan.filePathProperty());
         fileName.textProperty()
                 .bind(schaltplan.fileNameProperty());
+        imageView.imageProperty()
+                .bind(schaltplan.imageProperty());
     }
 
 }

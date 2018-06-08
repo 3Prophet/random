@@ -16,7 +16,7 @@ public class User {
         this(System.getProperty("user.name"), Role.Planer.toString());
     }
 
-    private User(String userName, String userRole) {
+    public User(String userName, String userRole) {
         this.userName = new SimpleStringProperty(userName);
         this.userRole = new SimpleStringProperty(userRole);
     }

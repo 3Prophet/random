@@ -1,10 +1,10 @@
 package ch.scs.random;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import ch.scs.random.dom.EditorState;
+import ch.scs.random.dom.EmptyEditorState;
 import ch.scs.random.dom.Schaltplan;
 import ch.scs.random.dom.User;
 import ch.scs.random.utils.FileChooserWrapper;
@@ -13,7 +13,6 @@ import ch.scs.random.view.RolleDialog;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -24,9 +23,9 @@ public class ImageEditor extends Application {
 
     private BorderPane rootLayout;
 
-    private User user = new User();
+    private static User user = null;
 
-    private Schaltplan schaltplan = new Schaltplan();
+    private static Schaltplan schaltplan = null;
 
     private MainView mainViewController;
 
@@ -40,6 +39,9 @@ public class ImageEditor extends Application {
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Editor");
+        if (user == null || schaltplan == null) {
+            setState(new EmptyEditorState());
+        }
         initRootLayout();
     }
 
@@ -92,18 +94,23 @@ public class ImageEditor extends Application {
 
     }
 
-    private void openFile(File file) throws FileNotFoundException {
+    private void openFile(File file) {
         System.out.println(file.getAbsolutePath());
-
-        Image image = new Image(new FileInputStream(file), 0, 0, true, false);
-        String path = file.getParent();
-        schaltplan.setFileName(file.getAbsolutePath()
-                .substring(path.length() + 1));
-        schaltplan.setFilePath(path);
-        mainViewController.setImage(image);
+        if (file.exists() && file.isFile()) {
+            String path = file.getParent();
+            String name = file.getAbsolutePath()
+                    .substring(path.length() + 1);
+            schaltplan.setFilePath(path);
+            schaltplan.setFileName(name);
+        }
     }
 
     public User getUser() {
         return user;
+    }
+
+    public static void setState(EditorState state) {
+        ImageEditor.user = state.getUser();
+        ImageEditor.schaltplan = state.getSchaltplan();
     }
 }
