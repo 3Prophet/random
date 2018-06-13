@@ -34,7 +34,7 @@ public class RolleDialog {
 
     @FXML
     private void initialize() {
-        setUpRoles();
+        setUpRolesAndUser();
     }
 
     @FXML
@@ -48,11 +48,16 @@ public class RolleDialog {
         this.dialogStage = dialogStage;
     }
 
-    private void setUpRoles() {
+    private void setUpRolesAndUser() {
         Arrays.asList(Role.values())
                 .stream()
                 .forEach(role -> roleChoiceBox.getItems()
                         .add(role.toString()));
+        if (nameTextField.getText()
+                .isEmpty()) {
+            nameTextField.setText(System.getProperty("user.name"));
+            roleChoiceBox.setValue(Role.Planer.toString());
+        }
     }
 
     public void setUser(User user) {

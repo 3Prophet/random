@@ -81,18 +81,22 @@ public class MainView {
         root.showRoleDialog();
     }
 
+    @FXML
+    private void handleSchaltplanClose(ActionEvent e) {
+        schaltplan.setFileName("");
+        schaltplan.setFilePath("");
+        user.setUserName("");
+        user.setUserRole("");
+    }
+
     private void initializeContextMenu() {
         imageConextMenu = new ContextMenu();
-        MenuItem saveMenuItem = new MenuItem("Close...");
-        saveMenuItem.setOnAction(e -> {
-            imageView.setImage(null);
-            user.setUserName(null);
-            user.setUserRole(null);
-            rolleLabel.setText(null);
-        });
+        MenuItem closeMenuItem = new MenuItem("Close...");
+        closeMenuItem.setId("closeContext");
+        closeMenuItem.setOnAction(e -> this.handleSchaltplanClose(e));
 
         imageConextMenu.getItems()
-                .add(saveMenuItem);
+                .add(closeMenuItem);
     }
 
     public void setUser(User user) {

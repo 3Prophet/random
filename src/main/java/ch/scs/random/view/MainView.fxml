@@ -43,7 +43,7 @@
             <ToolBar prefHeight="40.0" prefWidth="200.0">
               <items>
                 <Button fx:id="openButton" mnemonicParsing="false" onAction="#handleOpenMenuItemSelection" text="Open" />
-                  <Button fx:id="closeButton" mnemonicParsing="false" text="Close" />
+                  <Button fx:id="closeButton" mnemonicParsing="false" onAction="#handleSchaltplanClose" text="Close" />
               </items>
             </ToolBar>
             <AnchorPane prefHeight="30.0" prefWidth="200.0" VBox.vgrow="NEVER">

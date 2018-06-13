@@ -46,7 +46,7 @@ public class Schaltplan {
                 try {
                     setImage(new Image(new FileInputStream(new File(getFilePath(), getFileName()))));
                 } catch (FileNotFoundException e) {
-
+                    setImage(null);
                 }
             }
 

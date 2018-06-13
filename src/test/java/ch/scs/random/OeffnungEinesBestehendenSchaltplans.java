@@ -39,8 +39,8 @@ public class OeffnungEinesBestehendenSchaltplans extends JavaFxApplicationTest<I
     private static Iterable<Object[]> actionRoleData() {
         return Arrays.asList(new Object[][] { { SchaltplanEditorRobot.fileOpenViaMenuAction, "Planer" },
                 { SchaltplanEditorRobot.fileOpenViaMenuAction, "Planprüfer" }, { SchaltplanEditorRobot.fileOpenViaMenuAction, "Betrachter" },
-                { SchaltplanEditorRobot.fileOpenViaButtonAction, "Planer" }, { SchaltplanEditorRobot.fileOpenViaButtonAction, "Planprüfer" },
-                { SchaltplanEditorRobot.fileOpenViaButtonAction, "Betrachter" } });
+                { SchaltplanEditorRobot.fileOpenViaToolbarAction, "Planer" }, { SchaltplanEditorRobot.fileOpenViaToolbarAction, "Planprüfer" },
+                { SchaltplanEditorRobot.fileOpenViaToolbarAction, "Betrachter" } });
     }
 
     /**

@@ -8,9 +8,11 @@ import org.testfx.api.FxRobot;
 
 import ch.scs.random.dom.EditorState;
 import ch.scs.random.dom.User;
+import ch.scs.random.dom.User.Role;
 import javafx.application.Application;
 import javafx.scene.Node;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -39,7 +41,7 @@ public class SchaltplanEditorRobot {
         }
     };
 
-    public static FileOpenAction fileOpenViaButtonAction = new FileOpenAction() {
+    public static FileOpenAction fileOpenViaToolbarAction = new FileOpenAction() {
         @Override
         public void exec(FxRobot fxRobot) {
             fxRobot.clickOn("#openButton");
@@ -58,11 +60,11 @@ public class SchaltplanEditorRobot {
         @Override
         public void exec(FxRobot fxRobot) {
             fxRobot.clickOn("#imageView", MouseButton.SECONDARY);
-            fxRobot.sleep(2000);
-            fxRobot.type(KeyCode.DOWN);
-            fxRobot.sleep(2000);
-            fxRobot.type(KeyCode.ENTER);
-            fxRobot.sleep(2000);
+            fxRobot.clickOn("#closeContext");
+
+            /*
+             * fxRobot.sleep(1000); fxRobot.type(KeyCode.DOWN); fxRobot.sleep(1000); fxRobot.type(KeyCode.ENTER); fxRobot.sleep(1000);
+             */
         }
 
         @Override
@@ -70,6 +72,8 @@ public class SchaltplanEditorRobot {
             return "Closing Schaltplan via Context Menu";
         }
     };
+
+    public static FileCloseAction fileCloseActionViaToolbar = fxRobot -> fxRobot.clickOn("#closeButton");
 
     public interface PreconditionWithRole {
         public void establish(SchaltplanEditorRobot robot, String userRole, FileOpenAction action);
@@ -103,7 +107,7 @@ public class SchaltplanEditorRobot {
     }
 
     public void userInitiatesOpeningOfExistingSchaltplan(FileOpenAction action) {
-        fxRobot.sleep(2000);
+        fxRobot.sleep(1000);
         action.exec(fxRobot);
 
     }
@@ -136,11 +140,11 @@ public class SchaltplanEditorRobot {
                 break;
             }
             fxRobot.clickOn(choiceBoxFxId);
-            fxRobot.sleep(2000);
+            fxRobot.sleep(1000);
             fxRobot.type(KeyCode.DOWN);
-            fxRobot.sleep(2000);
+            fxRobot.sleep(1000);
             fxRobot.type(KeyCode.ENTER);
-            fxRobot.sleep(2000);
+            fxRobot.sleep(1000);
 
         }
 
@@ -160,6 +164,7 @@ public class SchaltplanEditorRobot {
     public void schaltplanEditorOpensRequestedSchaltplan() {
         ImageView imageView = (ImageView) find("#imageView");
         Image guiImage = imageView.getImage();
+
         Image refImage = new Image(TestResources.getTestSchaltplanInputStream());
         assertThat(UtilsTestFx.computeDifference(guiImage, refImage), is(0L));
     }
@@ -190,14 +195,33 @@ public class SchaltplanEditorRobot {
         action.exec(fxRobot);
     }
 
-    public void openUnmodifiedSchaltplanAs(String userRole) {
-
-        userInitiatesOpeningOfExistingSchaltplan(fileOpenViaButtonAction);
-        userProvidesHisNameAndRoleToSchaltplanEditor(userRole);
+    public void openUnmodifiedSchaltplanAs(Role userRole) {
+        userInitiatesOpeningOfExistingSchaltplan(fileOpenViaToolbarAction);
+        userProvidesHisNameAndRoleToSchaltplanEditor(userRole.toString());
     }
 
     public void establishSchaltplanEditorState(EditorState editorState) {
         ImageEditor.setState(editorState);
+
+    }
+
+    public void thereIsNoOpenedSchaltplan() {
+        ImageView imageView = (ImageView) find("#imageView");
+        assertThat(null, is(imageView.getImage()));
+    }
+
+    public void thereIsNoFilePathAndNameShown() {
+        Label filePathLabel = (Label) find("#filePath");
+        Label fileNameLabel = (Label) find("#fileName");
+        assertThat(filePathLabel.getText(), is(""));
+        assertThat(fileNameLabel.getText(), is(""));
+    }
+
+    public void userNameAndUserRoleAreUndefined() {
+        Label nameLabel = (Label) find("#nameLabel");
+        Label rolleLabel = (Label) find("#rolleLabel");
+        assertThat(nameLabel.getText(), is(""));
+        assertThat(rolleLabel.getText(), is(""));
 
     }
 

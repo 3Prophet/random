@@ -13,7 +13,7 @@ public class User {
     }
 
     public User() {
-        this(System.getProperty("user.name"), Role.Planer.toString());
+        this("", "");
     }
 
     public User(String userName, String userRole) {
