@@ -17,7 +17,7 @@ import javafx.stage.Window;
  */
 public class FileChooserWrapper {
 
-    private static final FileChooser chooser = new FileChooser();
+    private FileChooser chooser = new FileChooser();
 
     @Override
     public int hashCode() {
